@@ -85,16 +85,51 @@ def harris(img):
                     corner_points = np.vstack((corner_points,[h,w]))
     return corner_points, detected_img
 
+#https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_feature2d/py_features_harris/py_features_harris.html
+filename = 'checker_board.png'
+filename2 = "house.jpg"
+ocv = cv2.imread(filename)
+ocv2 = cv2.imread(filename2)
+
+gray = cv2.cvtColor(ocv, cv2.COLOR_BGR2GRAY)
+gray2 = cv2.cvtColor(ocv2, cv2.COLOR_BGR2GRAY)
+
+gray = np.float32(gray)
+gray2 = np.float32(gray2)
+
+dst = cv2.cornerHarris(gray,2,3,0.04)
+dst2 = cv2.cornerHarris(gray2,2,3,0.04)
+
+#result is dilated for marking the corners, not important
+dst = cv2.dilate(dst,None)
+dst2 = cv2.dilate(dst2, None)
+
+# Threshold for an optimal value, it may vary depending on the image.
+ocv[dst>0.01*dst.max()]=[0,0,255]
+ocv2[dst2>0.01*dst2.max()]=[0,0,255]
+
+
+
 
 corner, detected = harris(img)
 corner2, detected2 = harris(img2)
 
-plt.subplot(121)
+
+plt.subplot(221)
 plt.title("Checker Board")
 plt.imshow(detected)
 
-plt.subplot(122)
+plt.subplot(222)
 plt.title("Image of a House")
 plt.imshow(detected2)
+
+#For comparison
+plt.subplot(223)
+plt.title("OpenCV Harris Corner Detector")
+plt.imshow(ocv)
+
+plt.subplot(224)
+plt.title("OpenCV Harris Corner Detector")
+plt.imshow(ocv2)
 
 plt.show()
